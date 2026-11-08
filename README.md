@@ -1,20 +1,20 @@
-# Mix Keeper
+# Mix Keeper — a plush Claw'd for your Mac
 
-A little creature (by default a plush Claw'd) that lives at the corner of your Mac and tells you when
-**Claude Code** finishes or needs your permission. It opens its door, dashes to your
-cursor with a card, and one click takes you back to the right session.
+**Claw'd lives in a little Sparkle House in the corner of your screen.** When Claude Code
+finishes, or needs your permission, it opens the door, dashes to your cursor with a card,
+and one click takes you back to the right session. Then it walks home and shuts the door.
 
-![The ten characters](docs/characters.png)
+![Claw'd with a card, next to its Sparkle House](docs/hero.png)
 
 [繁體中文](README.zh-Hant.md)
 
-## What it does
+## What Claw'd does
 
-| When | It |
+| When | Claw'd |
 |---|---|
 | A Claude Code turn finishes (longer than 15 seconds) | runs to your cursor with a **Finished** card |
 | Claude Code needs your permission | runs over with a **Needs your permission** card and waits |
-| You click the card | jumps back to that session and goes home |
+| You click the card | jumps you back to that session, then walks home |
 | You answer in that session | the card goes away by itself |
 | Nothing is happening | strolls around its house, naps at the door, goes inside to rest |
 
@@ -32,27 +32,39 @@ Anything else brings the Claude app to the front.
 Background runs (`claude -p` scripts, scheduled tasks) never get a card, so your
 automations don't keep summoning it.
 
-## Its home
+## Claw'd, up close
 
-![Home by day and by night](docs/home-day-night.png)
+![Claw'd standing, walking, napping and holding a card](docs/clawd-states.png)
 
-- Claw'd lives in the **Sparkle House**; the other characters live in a tiny recording-studio
-  cottage. Drag the house anywhere; the spot is remembered.
-- When the work is done the pet walks home, goes in and closes the door. When something
+A soft felt plush with stitched edges. It walks on its four little legs and kicks up dust
+clouds as it goes, naps with its eyes closed into two lines, and lifts a card when
+something needs you.
+
+## The Sparkle House
+
+![The Sparkle House by day and by night](docs/home-day-night.png)
+
+- Claw'd's home. Drag it anywhere; the spot is remembered.
+- When the work is done Claw'd walks home, goes in and closes the door. When something
   needs you, the door opens and it dashes out.
 - Day and night follow the real sunrise and sunset where you are. Location comes from
   your Mac's time zone (the city in the system time-zone table), so there is no location
-  permission prompt.
-- It kicks up little dust clouds when it walks and when it dashes.
+  permission prompt. At night the windows glow.
 
-![Walking](docs/tape-states.png)
+## Not a Claw'd person?
+
+![Claw'd and nine other characters](docs/characters.png)
+
+Swap it for one of nine others in the menu bar: a tape, a speaker, a fader cat, a guitar,
+a trumpet, a snare drum, a piano, a sax and a cello. They live in a tiny recording-studio
+cottage instead.
 
 ## Playing with it
 
 - Drag the pet anywhere. Rub the mouse over it for hearts, click it to make it hop.
 - Click the house to call it outside.
 - Menu bar **◉** shows how many cards are waiting, and has **Bring Here**, **Go Home**,
-  ten characters (Claw'd plush by default), and **Settings**: Open at Login, Move Home to Corner, language
+  ten characters (Claw'd by default), and **Settings**: Open at Login, Move Home to Corner, language
   (Match System, 繁體中文, English).
 
 ## Install
