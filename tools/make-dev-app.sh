@@ -9,6 +9,7 @@ mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp .build/release/MixKeeper "$APP/Contents/MacOS/MixKeeper"
 cp -R assets/pet "$APP/Contents/Resources/pet"
 [ -d assets/house ] && cp -R assets/house "$APP/Contents/Resources/house"
+[ -d assets/house-sparkle ] && cp -R assets/house-sparkle "$APP/Contents/Resources/house-sparkle"
 cat > "$APP/Contents/Info.plist" <<'P'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">

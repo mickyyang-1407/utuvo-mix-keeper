@@ -9,10 +9,11 @@ STATES = ["day-closed", "day-open", "night-closed", "night-open"]
 SIZE = 336
 
 
-def main():
+def main(prefix="house", folder_name="house"):
+    """prefix：Codex 原圖檔名前綴（house／sparkle）；folder_name：輸出到 assets/ 底下哪個資料夾。"""
     cuts, boxes = {}, []
     for state in STATES:
-        img = Image.open(f"{ROOT}/design/codex/house-{state}.png").convert("RGB")
+        img = Image.open(f"{ROOT}/design/codex/{prefix}-{state}.png").convert("RGB")
         mask = background_mask(img)
         soft = mask.filter(ImageFilter.MinFilter(3)).filter(ImageFilter.GaussianBlur(0.7))
         cut = img.convert("RGBA")
@@ -24,7 +25,7 @@ def main():
     scale = SIZE / max(width, height)
     size = (round(width * scale), round(height * scale))
     offset = ((SIZE - size[0]) // 2, SIZE - size[1])
-    folder = f"{ROOT}/assets/house"
+    folder = f"{ROOT}/assets/{folder_name}"
     os.makedirs(folder, exist_ok=True)
     for state, cut in cuts.items():
         canvas = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
@@ -43,4 +44,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    main(*sys.argv[1:3]) if len(sys.argv) > 2 else main()

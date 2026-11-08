@@ -17,7 +17,7 @@ final class Keeper {
 
     private let panel = KeeperPanel(size: Keeper.size)
     private let view: PetView
-    private let house = House()
+    private let house: House
     private let cardPanel = CardPanel()
     private let dust = Dust()
     private let tracker = SessionTracker()
@@ -37,6 +37,7 @@ final class Keeper {
 
     init(character: PetCharacter) {
         view = PetView(frame: NSRect(origin: .zero, size: Self.size), images: loadImages(character))
+        house = House(style: character.houseStyle)
         panel.contentView = view
         view.walkFrames = loadWalkFrames(character)
         log("character=\(character.rawValue) walkFrames=\(view.walkFrames.count)")
@@ -404,6 +405,8 @@ final class Keeper {
         PetCharacter.saved = character
         view.images = loadImages(character)
         view.walkFrames = loadWalkFrames(character)
+        house.load(character.houseStyle)
+        if place == .inside { panel.setFrameOrigin(house.doorOrigin(for: Self.size)) }
         updateCharacterChecks()
         view.show(tracker.cards.isEmpty ? (sleepingUntil == nil ? .idle : .sleep) : .alert)
     }

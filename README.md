@@ -1,10 +1,10 @@
 # Mix Keeper
 
-A little studio creature that lives at the corner of your Mac and tells you when
+A little creature (by default a plush Claw'd) that lives at the corner of your Mac and tells you when
 **Claude Code** finishes or needs your permission. It opens its door, dashes to your
 cursor with a card, and one click takes you back to the right session.
 
-![The nine characters](docs/characters.png)
+![The ten characters](docs/characters.png)
 
 [繁體中文](README.zh-Hant.md)
 
@@ -36,7 +36,8 @@ automations don't keep summoning it.
 
 ![Home by day and by night](docs/home-day-night.png)
 
-- A tiny recording-studio cottage. Drag it anywhere; the spot is remembered.
+- Claw'd lives in the **Sparkle House**; the other characters live in a tiny recording-studio
+  cottage. Drag the house anywhere; the spot is remembered.
 - When the work is done the pet walks home, goes in and closes the door. When something
   needs you, the door opens and it dashes out.
 - Day and night follow the real sunrise and sunset where you are. Location comes from
@@ -51,7 +52,7 @@ automations don't keep summoning it.
 - Drag the pet anywhere. Rub the mouse over it for hearts, click it to make it hop.
 - Click the house to call it outside.
 - Menu bar **◉** shows how many cards are waiting, and has **Bring Here**, **Go Home**,
-  nine characters, and **Settings**: Open at Login, Move Home to Corner, language
+  ten characters (Claw'd plush by default), and **Settings**: Open at Login, Move Home to Corner, language
   (Match System, 繁體中文, English).
 
 ## Install

@@ -24,10 +24,11 @@ enum PetPose: String, CaseIterable {
 }
 
 enum PetCharacter: String, CaseIterable {
-    case tape, speaker, cat, guitar, trumpet, drum, piano, sax, cello
+    case clawd, tape, speaker, cat, guitar, trumpet, drum, piano, sax, cello
 
     var title: String {
         switch self {
+        case .clawd: return L.t("Claw'd 玩偶", "Claw'd Plush")
         case .tape: return L.t("磁帶小怪", "Tape Imp")
         case .speaker: return L.t("小喇叭精靈", "Speaker Sprite")
         case .cat: return L.t("推桿小貓", "Fader Kitty")
@@ -40,8 +41,15 @@ enum PetCharacter: String, CaseIterable {
         }
     }
 
+    /// Claw'd 住星芒之家，其他角色住錄音室小屋。
+    var houseStyle: String { self == .clawd ? "house-sparkle" : "house" }
+
     static var saved: PetCharacter {
-        get { UserDefaults.standard.string(forKey: "character").flatMap(PetCharacter.init) ?? .tape }
+        get {
+            // 預設 Claw'd 玩偶；圖不在就退回磁帶小怪。
+            let fallback: PetCharacter = loadImages(.clawd).isEmpty ? .tape : .clawd
+            return UserDefaults.standard.string(forKey: "character").flatMap(PetCharacter.init) ?? fallback
+        }
         set { UserDefaults.standard.set(newValue.rawValue, forKey: "character") }
     }
 }

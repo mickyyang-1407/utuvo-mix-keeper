@@ -7,6 +7,7 @@ from PIL import Image, ImageFilter
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 POSES = ["idle", "sleep", "alert"]
 SIZE = 448
+SHARED_SCALE = {"clawd"}
 
 
 def background_mask(img, limit=238):
@@ -70,7 +71,8 @@ def split_columns(mask, count=3):
 
 
 def main():
-    for name in ["tape", "speaker", "cat", "guitar", "trumpet", "drum", "piano", "sax", "cello"]:
+    names = ["clawd", "tape", "speaker", "cat", "guitar", "trumpet", "drum", "piano", "sax", "cello"]
+    for name in [n for n in names if os.path.exists(f"{ROOT}/design/codex/{n}-sheet.png")]:
         sheet = Image.open(f"{ROOT}/design/codex/{name}-sheet.png").convert("RGB")
         mask = background_mask(sheet)
         soft = mask.filter(ImageFilter.MinFilter(3)).filter(ImageFilter.GaussianBlur(0.7))
@@ -78,10 +80,15 @@ def main():
         cut.putalpha(soft)
         folder = f"{ROOT}/assets/pet/{name}"
         os.makedirs(folder, exist_ok=True)
-        for pose, (a, b) in zip(POSES, split_columns(mask)):
+        parts = []
+        for a, b in split_columns(mask):
             part = cut.crop((a, 0, b, sheet.height))
-            part = part.crop(part.getchannel("A").getbbox())
-            scale = SIZE / max(part.size)
+            parts.append(part.crop(part.getchannel("A").getbbox()))
+        # 同一張原圖本來就是同比例；新角色三個姿勢共用一個縮放，報信舉卡片時才不會變小。
+        # 舊角色維持各自縮放，大小不變。
+        shared = SIZE / max(max(p.size) for p in parts) if name in SHARED_SCALE else None
+        for pose, part in zip(POSES, parts):
+            scale = shared or SIZE / max(part.size)
             part = part.resize((round(part.width * scale), round(part.height * scale)), Image.LANCZOS)
             canvas = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
             canvas.paste(part, ((SIZE - part.width) // 2, SIZE - part.height))  # 腳貼底

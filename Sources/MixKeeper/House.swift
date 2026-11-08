@@ -8,8 +8,8 @@ final class House {
 
     let panel = KeeperPanel(size: House.size, level: .statusBar)
     private let view: HouseView
-    private let images: [String: NSImage]
-    private let doorFraction: CGFloat
+    private var images: [String: NSImage] = [:]
+    private var doorFraction: CGFloat = 0.5
     private let coordinate = ZoneTab.current()
     private var open = false
     private(set) var daylight = Daylight.day
@@ -17,24 +17,30 @@ final class House {
     var onClick: () -> Void = {}
     var onMoved: () -> Void = {}
 
-    init() {
-        var images: [String: NSImage] = [:]
-        var door: CGFloat = 0.5
-        if let folder = assetFolder("house") {
-            for name in ["day-closed", "day-open", "night-closed", "night-open"] {
-                images[name] = NSImage(contentsOf: folder.appendingPathComponent("\(name).png"))
-            }
-            if let data = try? Data(contentsOf: folder.appendingPathComponent("house.json")),
-               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Double], let x = json["doorX"] {
-                door = CGFloat(x)
-            }
-        }
-        self.images = images
-        doorFraction = door
+    init(style: String) {
         view = HouseView(frame: NSRect(origin: .zero, size: House.size))
+        load(style)
         panel.contentView = view
         view.onClick = { [weak self] in self?.onClick() }
         view.onDragEnd = { [weak self] in self?.saveOrigin(); self?.onMoved() }
+    }
+
+    /// 換房子款式（換角色時）。該款式的圖不在就留用原本的。
+    func load(_ style: String) {
+        guard let folder = assetFolder(style) ?? assetFolder("house") else { return }
+        var images: [String: NSImage] = [:]
+        for name in ["day-closed", "day-open", "night-closed", "night-open"] {
+            images[name] = NSImage(contentsOf: folder.appendingPathComponent("\(name).png"))
+        }
+        guard images.count == 4 else { return }
+        log("house style=\(folder.lastPathComponent)")
+        self.images = images
+        doorFraction = 0.5
+        if let data = try? Data(contentsOf: folder.appendingPathComponent("house.json")),
+           let json = try? JSONSerialization.jsonObject(with: data) as? [String: Double], let x = json["doorX"] {
+            doorFraction = CGFloat(x)
+        }
+        render()
     }
 
     func start() {

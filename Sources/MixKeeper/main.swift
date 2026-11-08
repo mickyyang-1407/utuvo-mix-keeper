@@ -27,6 +27,21 @@ func loadWalkFrames(_ character: PetCharacter) -> [NSImage] {
     return frames.count >= 2 ? frames : []
 }
 
+// 發文素材：MixKeeper --card-snapshot <輸出.png> [zh|en]
+if let index = CommandLine.arguments.firstIndex(of: "--card-snapshot"), CommandLine.arguments.count > index + 1 {
+    _ = NSApplication.shared
+    if CommandLine.arguments.count > index + 2, let lang = LanguageChoice(rawValue: CommandLine.arguments[index + 2]) { L.choice = lang }
+    let now = Date()
+    let cards = [
+        CardInfo(id: "a", kind: .needsPermission, project: "utuvo-monitor", branch: "main", source: L.t("Claude 桌面版", "Claude Desktop"),
+                 title: L.t("Monitor 修正錶頭", "Fix the meter"), since: now.addingTimeInterval(-180)),
+        CardInfo(id: "b", kind: .done, project: "utuvo-site", branch: "claude/home-page", source: "Remote Control",
+                 title: L.t("官網首頁改版", "Home page refresh"), since: now.addingTimeInterval(-40)),
+    ]
+    try snapshotCards(cards, to: URL(fileURLWithPath: CommandLine.arguments[index + 1]))
+    exit(0)
+}
+
 let app = NSApplication.shared
 app.setActivationPolicy(.accessory)
 

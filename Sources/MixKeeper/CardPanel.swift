@@ -73,6 +73,20 @@ private final class ClickThroughHost<Content: View>: NSHostingView<Content> {
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
 }
 
+/// 發文、文件用：用和螢幕上同一套卡片畫面輸出 PNG（2x）。
+func snapshotCards(_ cards: [CardInfo], to url: URL) throws {
+    let host = NSHostingView(rootView: CardStack(cards: cards, onOpen: { _ in }, onClose: { _ in }))
+    host.appearance = NSAppearance(named: .aqua)
+    host.frame = NSRect(origin: .zero, size: host.fittingSize)
+    host.layoutSubtreeIfNeeded()
+    let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: Int(host.frame.width * 2), pixelsHigh: Int(host.frame.height * 2),
+                               bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false,
+                               colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0)!
+    rep.size = host.frame.size
+    host.cacheDisplay(in: host.bounds, to: rep)
+    try rep.representation(using: .png, properties: [:])!.write(to: url)
+}
+
 final class CardPanel {
     private let panel = KeeperPanel(size: NSSize(width: 316, height: 100))
     var onOpen: (CardInfo) -> Void = { _ in }

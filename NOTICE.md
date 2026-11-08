@@ -6,8 +6,9 @@ Source code is provided under the repository's MIT license.
 
 ## Artwork
 
-The nine characters, their walk frames and the house in `assets/` are original designs
-made for Mix Keeper. They were generated with OpenAI image generation through the Codex
+The characters, their walk frames and the two houses in `assets/` were made for Mix Keeper.
+The default character is a fan-made plush take on Claw'd, the Claude Code mascot, living in
+a "Sparkle House"; the other nine characters are original designs. They were generated with OpenAI image generation through the Codex
 CLI, then cut out and aligned with `tools/cut_sheets.py` and `tools/cut_house.py`.
 The prompts are in `design/prompts/`. The raw generated sheets are not included.
 
@@ -21,6 +22,6 @@ Mix Keeper is a separate native Swift app: no code, art, sound or names were cop
 
 ## Trademarks
 
-Mix Keeper is an unofficial tool and is not affiliated with, endorsed by or sponsored by
-Anthropic. Claude and Claude Code are trademarks of Anthropic, PBC. Apple and macOS are
+Mix Keeper is an unofficial fan project and is not affiliated with, endorsed by or sponsored
+by Anthropic. Claude, Claude Code and Claw'd are trademarks or characters of Anthropic, PBC. Apple and macOS are
 trademarks of Apple Inc.
