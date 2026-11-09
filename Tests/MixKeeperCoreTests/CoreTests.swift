@@ -87,6 +87,22 @@ final class CoreTests: XCTestCase {
         XCTAssertEqual(Daylight.at(at("2026-11-08T08:30:00Z"), sydney), .day)
     }
 
+    func testAlwaysWalksHomeEvenWithCardsLeft() {
+        let t0 = Date(timeIntervalSince1970: 1000)
+        // 剛報完信：先在游標旁待一下
+        XCTAssertFalse(HomeReturn.shouldWalkHome(awayFromHome: true, deliveredAt: t0, typedAt: nil, now: t0.addingTimeInterval(5)))
+        // 15 秒後，就算卡片沒點也回家
+        XCTAssertTrue(HomeReturn.shouldWalkHome(awayFromHome: true, deliveredAt: t0, typedAt: nil, now: t0.addingTimeInterval(15)))
+        // 在任何 session 打字：馬上回家
+        XCTAssertTrue(HomeReturn.shouldWalkHome(awayFromHome: true, deliveredAt: t0, typedAt: t0.addingTimeInterval(2), now: t0.addingTimeInterval(3)))
+        // 打字在報信之前，不算（是上一輪的）
+        XCTAssertFalse(HomeReturn.shouldWalkHome(awayFromHome: true, deliveredAt: t0, typedAt: t0.addingTimeInterval(-30), now: t0.addingTimeInterval(3)))
+        // 被拖走、沒有報信紀錄：也回家
+        XCTAssertTrue(HomeReturn.shouldWalkHome(awayFromHome: true, deliveredAt: nil, typedAt: nil, now: t0))
+        // 已經在家門口：不用走
+        XCTAssertFalse(HomeReturn.shouldWalkHome(awayFromHome: false, deliveredAt: t0, typedAt: nil, now: t0.addingTimeInterval(60)))
+    }
+
     func testSessionsDoNotClearEachOther() {
         let t = SessionTracker()
         t.handle(.init(kind: .stop, cliSessionID: "a"))

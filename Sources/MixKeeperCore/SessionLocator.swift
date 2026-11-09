@@ -67,6 +67,19 @@ public struct SessionLocator {
     }
 }
 
+/// 無論如何都要回家：報完信等一下就回去；你在任何 session 打字（人已經在 Claude 裡了）就馬上回去。
+/// 還有卡片時回到門口拿著等，全部處理完才進門。
+public enum HomeReturn {
+    public static let linger: TimeInterval = 15
+
+    public static func shouldWalkHome(awayFromHome: Bool, deliveredAt: Date?, typedAt: Date?, now: Date) -> Bool {
+        guard awayFromHome else { return false }
+        if let typedAt, deliveredAt.map({ typedAt >= $0 }) ?? true { return true }
+        guard let deliveredAt else { return true }
+        return now.timeIntervalSince(deliveredAt) >= linger
+    }
+}
+
 public struct RemoteSession: Equatable {
     public var bridgeID: String
     public var title: String

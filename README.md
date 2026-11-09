@@ -16,6 +16,7 @@ and one click takes you back to the right session. Then it walks home and shuts 
 | Claude Code needs your permission | runs over with a **Needs your permission** card and waits |
 | You click the card | jumps you back to that session, then walks home |
 | You answer in that session | the card goes away by itself |
+| You ignore the card, or type in any other session | after 15 seconds (right away if you type) it walks home anyway and waits at its door holding the card; it goes inside once every card is handled |
 | Nothing is happening | strolls around its house, naps at the door, goes inside to rest |
 
 Each card shows the project, git branch, session title, where it runs and how long it has

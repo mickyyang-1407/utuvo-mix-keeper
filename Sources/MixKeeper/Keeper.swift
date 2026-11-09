@@ -32,6 +32,8 @@ final class Keeper {
     private var restUntil = Date()
     private var sleepingUntil: Date?
     private var dragging = false
+    private var deliveredAt: Date?
+    private var typedAt: Date?
     private var statusItem: NSStatusItem?
     private var characterItems: [PetCharacter: NSMenuItem] = [:]
 
@@ -67,9 +69,14 @@ final class Keeper {
 
     func receive(_ event: KeeperEvent, entry: String) {
         let id = event.cliSessionID
-        if event.kind == .submit { turnStarted[id] = event.at }
+        if event.kind == .submit {
+            turnStarted[id] = event.at
+            typedAt = event.at   // 你在某個 session 打字了：人在 Claude 裡，Claw'd 回家
+        }
         if event.kind == .submit || event.kind == .end {
+            let had = !tracker.cards.isEmpty
             tracker.handle(event)
+            defer { if had { cardsMaybeCleared() } }
             if event.kind == .end { infos[id] = nil; turnStarted[id] = nil }
             log("\(event.kind.rawValue) entry=\(entry.isEmpty ? "-" : entry)")
             refresh()
@@ -98,7 +105,10 @@ final class Keeper {
         comeOut { [weak self] in
             guard let self, !self.tracker.cards.isEmpty else { return }
             self.view.show(.alert)
-            self.dash(to: self.besideCursor()) { [weak self] in self?.refresh() }
+            self.dash(to: self.besideCursor()) { [weak self] in
+                self?.deliveredAt = Date()
+                self?.refresh()
+            }
             self.refresh()
         }
     }
@@ -148,7 +158,17 @@ final class Keeper {
     private func close(_ card: CardInfo) {
         tracker.dismiss(card.id)
         refresh()
-        if tracker.cards.isEmpty { nextIdle = Date().addingTimeInterval(1.5) }  // 事情做完，等一下就回家
+        cardsMaybeCleared()
+    }
+
+    /// 最後一張卡片處理完：不管在哪裡，直接回家進門。
+    private func cardsMaybeCleared() {
+        guard tracker.cards.isEmpty, place == .outside else { return }
+        nextIdle = Date().addingTimeInterval(1.5)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            guard let self, self.tracker.cards.isEmpty, self.place == .outside, !self.dragging, self.moveTimer == nil else { return }
+            self.goHome()
+        }
     }
 
     // MARK: 家
@@ -178,8 +198,10 @@ final class Keeper {
     /// 走回門口、開門進去、關門，在家休息一陣子。
     private func goHome(speed: CGFloat = Keeper.walkHomeSpeed) {
         guard place == .outside, !busy else { return }
+        log("goHome cards=\(tracker.cards.count) falling=\(panel.frame.minY - house.groundY > 2)")
         sleepingUntil = nil
-        view.show(.idle)
+        view.show(tracker.cards.isEmpty ? .idle : .alert)
+        cardPanel.show([], beside: panel.frame)   // 走路時先收起卡片，到門口再拿出來
         // 在半空中（剛報完信）：先掉到地上、落地揚一團土，再沿地板走回家。
         if panel.frame.minY - house.groundY > 2 {
             busy = true
@@ -194,7 +216,14 @@ final class Keeper {
             return
         }
         walk(to: house.doorOrigin(for: Self.size), speed: speed) { [weak self] in
-            guard let self, self.tracker.cards.isEmpty else { return }
+            guard let self else { return }
+            guard self.tracker.cards.isEmpty else {
+                // 還有沒處理的卡片：在門口拿著等，卡片放在門口，點了一樣會跳回去
+                log("waiting at door with \(self.tracker.cards.count) card(s)")
+                self.view.show(.alert)
+                self.refresh()
+                return
+            }
             self.busy = true
             self.house.setDoor(open: true)
             self.view.fadeOut { [weak self] in
@@ -230,8 +259,17 @@ final class Keeper {
     // MARK: 平常
 
     private func tick() {
-        guard !dragging, !busy, tracker.cards.isEmpty, moveTimer == nil else { return }
+        guard !dragging, !busy, moveTimer == nil else { return }
         let now = Date()
+        if !tracker.cards.isEmpty {
+            // 有卡片沒處理也一定回家，只是停在門口等，不進門。
+            let away = place == .outside && (abs(panel.frame.minY - house.groundY) > 2 || distanceFromDoor() > Self.nearHome)
+            if HomeReturn.shouldWalkHome(awayFromHome: away, deliveredAt: deliveredAt, typedAt: typedAt, now: now) {
+                log("walk home with cards waiting")
+                goHome()
+            }
+            return
+        }
         if place == .inside {
             if now >= restUntil { comeOut { [weak self] in self?.nextIdle = Date().addingTimeInterval(3) } }
             return
@@ -345,6 +383,7 @@ final class Keeper {
 
     private func dragEnded() {
         dragging = false
+        deliveredAt = Date()   // 有卡片的話，被拖走後也會等一下再回家
         moveTimer = nil
         sleepingUntil = nil
         nextIdle = Date().addingTimeInterval(5)
