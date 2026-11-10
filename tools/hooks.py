@@ -14,7 +14,8 @@ EVENTS = {"Stop": "stop", "Notification": "notification", "PermissionRequest": "
 
 def ours(cmd):
     # 認得「這份腳本的實際路徑」，或任何 mix-keeper 資料夾裡的同名腳本（換過資料夾也清得掉舊的）。
-    return isinstance(cmd, str) and (SCRIPT in cmd or (MARK in cmd and "mix-keeper" in cmd.lower()))
+    # 也認得 App 自己裝的（~/Library/Application Support/MixKeeper/send-event.sh），兩邊才不會重複裝。
+    return isinstance(cmd, str) and (SCRIPT in cmd or ("send-event.sh" in cmd and ("mix-keeper" in cmd.lower() or "MixKeeper" in cmd)))
 
 
 def strip(hooks):

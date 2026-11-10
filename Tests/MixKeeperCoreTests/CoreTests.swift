@@ -103,6 +103,32 @@ final class CoreTests: XCTestCase {
         XCTAssertFalse(HomeReturn.shouldWalkHome(awayFromHome: false, deliveredAt: t0, typedAt: nil, now: t0.addingTimeInterval(60)))
     }
 
+    func testHookInstallerKeepsOtherHooksAndReplacesOldPaths() {
+        let mine = "/bin/sh '/Users/u/Library/Application Support/MixKeeper/send-event.sh' stop"
+        let theirs: [String: Any] = ["type": "command", "command": "/Users/u/Scripts/notify.py"]
+        let oldClone: [String: Any] = ["type": "command", "command": "/bin/sh '/Users/u/utuvo-mix-keeper/hooks/send-event.sh' stop"]
+        let settings: [String: Any] = [
+            "theme": "dark",
+            "hooks": ["Stop": [["hooks": [theirs, oldClone]]], "PreToolUse": [["matcher": "Bash", "hooks": [theirs]]]],
+        ]
+        let installed = HookInstaller.updated(settings, script: "/Users/u/Library/Application Support/MixKeeper/send-event.sh")
+        XCTAssertTrue(HookInstaller.isInstalled(installed))
+        XCTAssertEqual(installed["theme"] as? String, "dark")
+        let stop = (installed["hooks"] as! [String: Any])["Stop"] as! [[String: Any]]
+        let commands = stop.flatMap { ($0["hooks"] as! [[String: Any]]).compactMap { $0["command"] as? String } }
+        XCTAssertEqual(commands, ["/Users/u/Scripts/notify.py", mine])   // 舊 clone 路徑被換掉，別人的留著
+        let removed = HookInstaller.updated(installed, script: nil)
+        XCTAssertFalse(HookInstaller.isInstalled(removed))
+        let hooks = removed["hooks"] as! [String: Any]
+        XCTAssertEqual(Set(hooks.keys), ["Stop", "PreToolUse"])
+        XCTAssertEqual(((hooks["Stop"] as! [[String: Any]])[0]["hooks"] as! [[String: Any]]).count, 1)
+        XCTAssertNil(HookInstaller.updated(["hooks": ["Stop": [["hooks": [oldClone]]]]], script: nil)["hooks"])
+    }
+
+    func testHookCommandQuotesPathsWithApostrophes() {
+        XCTAssertEqual(HookInstaller.command(script: "/Users/o'neil/send-event.sh", kind: "stop"), "/bin/sh '/Users/o'\\''neil/send-event.sh' stop")
+    }
+
     func testSessionsDoNotClearEachOther() {
         let t = SessionTracker()
         t.handle(.init(kind: .stop, cliSessionID: "a"))

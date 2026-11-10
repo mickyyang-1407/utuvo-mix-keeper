@@ -65,21 +65,20 @@ cottage instead.
 - Drag the pet anywhere. Rub the mouse over it for hearts, click it to make it hop.
 - Click the house to call it outside.
 - Menu bar **◉** shows how many cards are waiting, and has **Bring Here**, **Go Home**,
-  ten characters (Claw'd by default), and **Settings**: Open at Login, Move Home to Corner, language
+  ten characters (Claw'd by default), and **Settings**: Connect to Claude Code, Open at Login, Move Home to Corner, language
   (Match System, 繁體中文, English).
 
 ## Download
 
-**[Download Mix Keeper 1.0.0 (DMG)](https://github.com/mickyyang-1407/utuvo-mix-keeper/releases/latest)** — signed with
+**[Download Mix Keeper (DMG)](https://github.com/mickyyang-1407/utuvo-mix-keeper/releases/latest)** — signed with
 Developer ID and notarized by Apple, so it opens without warnings. Apple Silicon, macOS 14 or later.
 
-Open the DMG, drag **Mix Keeper** to Applications and open it. Then add its Claude Code
-hooks once (they live in the source, so keep the folder where you clone it):
+1. Open the DMG, drag **Mix Keeper** to Applications and open it.
+2. In the menu bar click **◉ → Settings → Connect to Claude Code**. That's it.
 
-```bash
-git clone https://github.com/mickyyang-1407/utuvo-mix-keeper.git ~/utuvo-mix-keeper
-python3 ~/utuvo-mix-keeper/tools/hooks.py install
-```
+Connecting adds Mix Keeper's own hooks to `~/.claude/settings.json` (everything else is kept,
+and a backup is written next to it first). Click it again to disconnect. New Claude Code
+sessions pick it up.
 
 ## Build from source
 

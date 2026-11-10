@@ -419,6 +419,12 @@ final class Keeper {
 
     private func settingsMenu() -> NSMenu {
         let menu = NSMenu()
+        let hooks = MenuAction(L.t("連接 Claude Code", "Connect to Claude Code")) { [weak self] in
+            do { try HookSetup.set(!HookSetup.isInstalled) } catch { log("hooks error: \(error.localizedDescription)") }
+            self?.setupMenu()
+        }
+        hooks.state = HookSetup.isInstalled ? .on : .off
+        menu.addItem(hooks)
         let login = MenuAction(L.t("開機自動開啟", "Open at Login")) { [weak self] in
             LoginItem.set(!LoginItem.isOn)
             self?.setupMenu()

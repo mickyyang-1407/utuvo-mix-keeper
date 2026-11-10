@@ -10,6 +10,14 @@ func loadImages(_ character: PetCharacter) -> [PetPose: NSImage] {
     return images
 }
 
+// 測試／自動化：MixKeeper --hooks install|uninstall|status
+if let index = CommandLine.arguments.firstIndex(of: "--hooks") {
+    let value = CommandLine.arguments.dropFirst(index + 1).first ?? "status"
+    if value == "install" || value == "uninstall" { try HookSetup.set(value == "install") }
+    print("hooks installed:", HookSetup.isInstalled, HookSetup.scriptURL.path)
+    exit(0)
+}
+
 if let index = CommandLine.arguments.firstIndex(of: "--login-item") {
     let value = CommandLine.arguments.dropFirst(index + 1).first
     if value == "on" || value == "off" { LoginItem.set(value == "on") }
