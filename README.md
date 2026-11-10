@@ -68,7 +68,21 @@ cottage instead.
   ten characters (Claw'd by default), and **Settings**: Open at Login, Move Home to Corner, language
   (Match System, 繁體中文, English).
 
-## Install
+## Download
+
+**[Download Mix Keeper 1.0.0 (DMG)](https://github.com/mickyyang-1407/utuvo-mix-keeper/releases/latest)** — signed with
+Developer ID and notarized by Apple, so it opens without warnings. Apple Silicon, macOS 14 or later.
+
+Open the DMG, drag **Mix Keeper** to Applications and open it. Then add its Claude Code
+hooks once (they live in the source, so keep the folder where you clone it):
+
+```bash
+git clone https://github.com/mickyyang-1407/utuvo-mix-keeper.git ~/utuvo-mix-keeper
+python3 ~/utuvo-mix-keeper/tools/hooks.py install
+```
+
+## Build from source
+
 
 macOS 14 or later, Apple Silicon (that is what it has been tested on), Swift 6
 (Xcode 16 or later).

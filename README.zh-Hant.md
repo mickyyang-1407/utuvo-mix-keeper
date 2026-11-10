@@ -57,7 +57,20 @@
 - 選單列的 **◉** 會顯示幾張卡片在等你，裡面有「叫過來」「回家」、十個角色（預設 Claw'd），
   以及「設定」：開機自動開啟、把家搬回右下角、語言（跟隨系統、繁體中文、English）。
 
-## 安裝
+## 下載
+
+**[下載混音守門員 1.0.0（DMG）](https://github.com/mickyyang-1407/utuvo-mix-keeper/releases/latest)**：已用 Developer ID
+簽章、通過 Apple 公證，打開不會跳警告。Apple Silicon、macOS 14 以上。
+
+打開 DMG，把 **Mix Keeper** 拖進「應用程式」打開。接著裝一次 Claude Code 的 hook（hook 在原始碼裡，clone 下來的資料夾請留著）：
+
+```bash
+git clone https://github.com/mickyyang-1407/utuvo-mix-keeper.git ~/utuvo-mix-keeper
+python3 ~/utuvo-mix-keeper/tools/hooks.py install
+```
+
+## 從原始碼安裝
+
 
 macOS 14 以上，Apple Silicon（目前只在這上面測過），Swift 6（Xcode 16 以上）。
 
