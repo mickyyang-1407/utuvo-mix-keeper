@@ -336,11 +336,16 @@ final class Keeper {
             done()
         }
 
+        // 用實際經過的時間算步伐：計時器快慢不同的 Mac 上，速度都一樣（一次最多算 0.1 秒，避免卡頓後瞬移）
+        var lastTick = Date()
         moveTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 60, repeats: true) { [weak self] timer in
             guard let self else { timer.invalidate(); return }
             let dx = target.x - now.x, dy = target.y - now.y
             let distance = hypot(dx, dy)
-            let step = speed / 60
+            let tickNow = Date()
+            let dt = min(tickNow.timeIntervalSince(lastTick), 0.1)
+            lastTick = tickNow
+            let step = speed * CGFloat(dt)
             if distance <= step { finish(); return }
             // 衝刺一格就跨好幾團的距離，沿路補齊，塵土才連成一串。
             var travelled: CGFloat = 0
@@ -399,7 +404,8 @@ final class Keeper {
         }
         let menu = NSMenu()
         menu.addItem(MenuAction(L.t("叫過來", "Bring Here")) { [weak self] in self?.summon() })
-        menu.addItem(MenuAction(L.t("回家", "Go Home")) { [weak self] in self?.goHome(speed: Self.dashSpeed / 3) })
+        // 跟自己回家一樣：先掉到地上，再用走路速度慢慢走回去
+        menu.addItem(MenuAction(L.t("回家", "Go Home")) { [weak self] in self?.goHome() })
         menu.addItem(.separator())
         characterItems = [:]
         for character in PetCharacter.allCases where !loadImages(character).isEmpty {
