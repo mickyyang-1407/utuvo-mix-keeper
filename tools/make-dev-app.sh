@@ -8,6 +8,7 @@ rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp .build/release/MixKeeper "$APP/Contents/MacOS/MixKeeper"
 cp -R assets/pet "$APP/Contents/Resources/pet"
+[ -f assets/AppIcon.icns ] && cp assets/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
 [ -d assets/house ] && cp -R assets/house "$APP/Contents/Resources/house"
 [ -d assets/house-sparkle ] && cp -R assets/house-sparkle "$APP/Contents/Resources/house-sparkle"
 cat > "$APP/Contents/Info.plist" <<'P'
@@ -24,6 +25,7 @@ cat > "$APP/Contents/Info.plist" <<'P'
 <key>CFBundleShortVersionString</key><string>0.1</string>
 <key>LSMinimumSystemVersion</key><string>14.0</string>
 <key>LSUIElement</key><true/>
+<key>CFBundleIconFile</key><string>AppIcon</string>
 <key>NSAppleEventsUsageDescription</key><string>Switches to the right Terminal tab when you click a card.</string>
 </dict></plist>
 P
